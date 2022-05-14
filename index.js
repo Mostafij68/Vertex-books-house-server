@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // middleware
 app.use(cors());
@@ -24,6 +24,28 @@ async function run() {
             const books = await cursor.toArray();
             res.send(books);
         });
+
+        app.get('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const books = await booksCollection.findOne(query);
+            res.send(books);
+        });
+
+        app.put('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateQuantity = req.body;
+            const filter = {_id: ObjectId(id)};
+            const options = {upsert: true};
+            const updateDoc = {
+                $set: {
+                    quantity: updateQuantity.reduce
+                }
+            };
+            console.log(updateDoc)
+            const result = await booksCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
     }
     finally{}
 };
