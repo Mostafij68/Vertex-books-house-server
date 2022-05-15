@@ -52,6 +52,12 @@ async function run() {
             const query = {_id: ObjectId(id)};
             const result = await booksCollection.deleteOne(query);
             res.send(result)
+        });
+
+        app.post('/inventory', async(req, res) =>{
+            const addItem = req.body;
+            const result = await booksCollection.insertOne(addItem);
+            res.send(result)
         })
     }
     finally{}
