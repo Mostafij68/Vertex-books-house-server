@@ -45,6 +45,13 @@ async function run() {
             console.log(updateDoc)
             const result = await booksCollection.updateOne(filter, updateDoc, options);
             res.send(result);
+        });
+
+        app.delete('/inventory/:id', async (req, res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await booksCollection.deleteOne(query);
+            res.send(result)
         })
     }
     finally{}
