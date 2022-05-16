@@ -17,6 +17,7 @@ async function run() {
     try{
         await client.connect();
         const booksCollection = client.db('vertexBooks').collection('books');
+        const photosCollection = client.db('vertexBooks').collection('photos');
 
         app.get('/inventory', async(req, res)=>{
             const query = {};
@@ -42,7 +43,6 @@ async function run() {
                     quantity: updateQuantity.number
                 }
             };
-            console.log(updateDoc)
             const result = await booksCollection.updateOne(filter, updateDoc, options);
             res.send(result);
         });
@@ -54,11 +54,27 @@ async function run() {
             res.send(result)
         });
 
-        app.post('/inventory', async(req, res) =>{
+        app.post('/items', async(req, res) =>{
             const addItem = req.body;
             const result = await booksCollection.insertOne(addItem);
             res.send(result)
-        })
+        });
+
+        app.get('/items', async(req, res)=>{
+            const email = req.query.email;
+            const query = { email: email };
+            const cursor = booksCollection.find(query);
+            const items = await cursor.toArray();
+            res.send(items);
+        });
+
+        app.get('/photos', async(req, res)=>{
+            const query = {};
+            const cursor = photosCollection.find(query);
+            const photos = await cursor.toArray();
+            res.send(photos);
+        });
+        
     }
     finally{}
 };
